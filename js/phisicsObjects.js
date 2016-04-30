@@ -4,36 +4,42 @@
 var phObject = function () {},
     phObjectBase = {
         type : "generic", //generic, hSolid, vSolid
+        isDrawable: false,
+        isPlayable: false,
         position : [0,0],
         _backup : {},
         /**
          * 
          */
         backup : function () {
-            this._backup.velocity = {
-                value: this.velocity.value,
-                directionVector: this.velocity.directionVector.slice()
+            this._backup.gravity_velocity = {
+                value: this.gravity_velocity.value,
+                directionVector: this.gravity_velocity.directionVector.slice()
             }
         },
         /**
          * 
          */
         restore : function () {
-            this.velocity.value = this._backup.velocity.value;
-            this.velocity.directionVector = this._backup.velocity.directionVector.slice(); 
+            this.gravity_velocity.value = this._backup.gravity_velocity.value;
+            this.gravity_velocity.directionVector = this._backup.gravity_velocity.directionVector.slice(); 
         },
         
-        velocity : {
+        gravity_velocity : {
             value: 0,
             directionVector: [0,0]
         },
+        reaction_should_react: true,
         /**
          * 
          */
         reaction_react: function () {
-            this.velocity.directionVector = vectorLib.scale(this.velocity.directionVector, -0.8);
-            if(vectorLib.module(this.velocity.directionVector) <= tolerance) {
-                this.velocity.directionVector =[0,0];
+            if(!this.reaction_should_react) {
+                return;
+            }
+            this.gravity_velocity.directionVector = vectorLib.scale(this.gravity_velocity.directionVector, -0.8);
+            if(vectorLib.module(this.gravity_velocity.directionVector) <= tolerance) {
+                this.gravity_velocity.directionVector =[0,0];
             }
         },
         boundaries : {

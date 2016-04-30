@@ -12,21 +12,26 @@ playerBase = {
             switch (event.keyCode) {
                 case 37: // Left
                     this.keysPresed.left = true;
+                    event.preventDefault();
                 break;
 
                 case 38: // Up
                     this.keysPresed.up = true;
+                    event.preventDefault();
                 break;
 
                 case 39: // Right
                     this.keysPresed.right = true;
+                    event.preventDefault();
                 break;
 
                 case 40: // Down
                     this.keysPresed.down = true;
+                    event.preventDefault();
                 break;
                 case 32: // space???
                     this.keysPresed.action1 = false;
+                    event.preventDefault();
                 break;
             }
         }, this), false);
