@@ -56,7 +56,7 @@ var world = function () {},
             
             //we check for collisions
             for (j = 0; j < lSolids; j+= 1) {
-                if(this.solidCollection[j].solid_isColiding(aPosTmp, oTmp.boundaries, this.gravity.directionVector)) {
+                if(this.solidCollection[j].solid_isColiding(aPosTmp, oTmp.getBoundaries(), this.gravity.directionVector)) {
                     //if we should not react to the collision, then the
                     //direction vector is nothing, and gravity_velocity is 0.
                     if(!oTmp.reaction_should_react) {
@@ -91,6 +91,8 @@ var world = function () {},
     player_movements_apply: function () {
         var i = 0,
             l = 0,
+            j = 0,
+            lSolids = this.solidCollection.length,
             oTmp;
             
         if (!this.player) {
@@ -105,7 +107,14 @@ var world = function () {},
                 continue;
             }
             
+            oTmp.backup();
             oTmp.move(this.player.keysPresed);
+            for (j = 0; j < lSolids; j = j + 1) {
+                if(this.solidCollection[j].solid_isColiding(oTmp.position, oTmp.getBoundaries(), this.gravity.directionVector)) {
+                    oTmp.restore();
+                    break;
+                }
+            }
         }
     },
     /**
@@ -130,13 +139,29 @@ var world = function () {},
      * 
      */
     solids_addSolid: function (pObject) {
-            this.solidCollection.push(pObject);
-        },
-    
+        this.solidCollection.push(pObject);
+    },
+    /**
+     * 
+     */
     solids_addHSolid:function (pHorizontalCoordinate) {
             var oTmp = new phHSolidObject();
             oTmp.solid_hCoordinate = pHorizontalCoordinate;
             this.solids_addSolid(oTmp);
+    },
+    /**
+     * 
+     */
+    solids_addSquareSolid: function (pXPos, pYPos, pWidth, pHeight) {
+        var oTmp = new pSolidObject();
+        oTmp.position[0] = pXPos;
+        oTmp.position[1] = pYPos;
+        
+        oTmp.boundariesArray[0]  = 0; //top
+        oTmp.boundariesArray[3] = 0; //left
+        oTmp.boundariesArray[1] = pWidth; //right
+        oTmp.boundariesArray[2] = pHeight; //bottom
+        this.solids_addSolid(oTmp);
     },
     /**
      * 
@@ -181,6 +206,8 @@ var init = function () {
         ctx = myCanvas.getContext("2d"),
         mundo = new world(),
         cosa = new drawableObject(ctx),
+        bloque = new drawableObject(ctx),
+        piso = new drawableObject(ctx),
         jugador = new player(),
         atmp;
         
@@ -189,10 +216,28 @@ var init = function () {
         cosa.gravity_velocity.value = 0;
         cosa.position=[30,30];
         
+        //quitar
+        bloque.drawMethod = _.bind(function ()  {
+            this._canvasContext.beginPath();
+            ctx.rect(10,150,100,500);
+            ctx.stroke();
+        }, bloque);
+        //quitar
+        piso.drawMethod = _.bind(function ()  {
+            this._canvasContext.beginPath();
+            ctx.rect(0,510,10000,1);
+            ctx.stroke();
+        }, piso);
+        
+        
+        
         mundo.gravity.isAccelerated = false;
         mundo.gravity.velocity = 9.4*0.2;
         mundo.addObject(cosa);
+        
+        //solidos
         mundo.solids_addHSolid(500);
+        mundo.solids_addSquareSolid(10,150,100,500);
         mundo.player = jugador;
         
         mundo.startInterval(null, _.bind(function(timePassed){
@@ -201,6 +246,9 @@ var init = function () {
             
             atmp = mundo.performIteration(tpSeconds);
             atmp[0].drawMethod();
+            bloque.drawMethod();
+            piso.drawMethod();
+            console.log(cosa.position);
               
         }, this))
 }

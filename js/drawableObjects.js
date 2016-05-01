@@ -3,6 +3,7 @@
  */
 var drawableObject =function(pCanvasContext) {
         _.extend(this, new Object(phObject.prototype));
+        
         if(pCanvasContext) {
             this._canvasContext = pCanvasContext;
         };
@@ -16,8 +17,11 @@ var drawableObject =function(pCanvasContext) {
     drawableObjectBase = {
         _canvasContext : null,
         _initialize : function () {
-            this.boundaries.top = 10;
-            this.boundaries.right = 10;    
+            if(this.prototype._initialize) {
+                this.prototype._initialize();
+            }
+            this.boundariesArray[0] = 10;
+            this.boundariesArray[1] = 10;    
         },
         /**
          * Method to draw an object
