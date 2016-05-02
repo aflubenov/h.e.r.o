@@ -225,7 +225,11 @@ var init = function () {
         //quitar
         piso.drawMethod = _.bind(function ()  {
             this._canvasContext.beginPath();
-            ctx.rect(0,510,10000,1);
+            ctx.rect(100,510,200,100);
+            ctx.stroke();
+            
+            this._canvasContext.beginPath();
+            ctx.rect(290,310,10,200);
             ctx.stroke();
         }, piso);
         
@@ -236,8 +240,10 @@ var init = function () {
         mundo.addObject(cosa);
         
         //solidos
-        mundo.solids_addHSolid(500);
+        //mundo.solids_addHSolid(500);
         mundo.solids_addSquareSolid(10,150,100,500);
+        mundo.solids_addSquareSolid(100,510,200,100);
+        mundo.solids_addSquareSolid(290,310,10,200);
         mundo.player = jugador;
         
         mundo.startInterval(null, _.bind(function(timePassed){

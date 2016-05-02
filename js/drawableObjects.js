@@ -12,17 +12,16 @@ var drawableObject =function(pCanvasContext) {
         this.isPlayable = true;
         this.reaction_should_react = false;
         
-        this._initialize();
+        if(this._initialize) {
+            this._initialize();
+        }
+        this.boundariesArray[0] = 10;
+        this.boundariesArray[1] = 10;    
+        this.boundariesArray[2] = 10;    
+        this.boundariesArray[3] = 10;
     },
     drawableObjectBase = {
         _canvasContext : null,
-        _initialize : function () {
-            if(this.prototype._initialize) {
-                this.prototype._initialize();
-            }
-            this.boundariesArray[0] = 10;
-            this.boundariesArray[1] = 10;    
-        },
         /**
          * Method to draw an object
          */
@@ -54,4 +53,5 @@ var drawableObject =function(pCanvasContext) {
             
         }
     };
+
 drawableObject.prototype = new Object(drawableObjectBase);

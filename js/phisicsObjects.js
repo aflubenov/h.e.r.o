@@ -11,13 +11,14 @@ var phObject = function () {
         type : "generic", //generic, hSolid, vSolid
         isDrawable: false,
         isPlayable: false,
-        position : [0,0],
+        position : null,
         _backup : null,
         /**
          * 
          */
         _initialize: function () {
             this.boundariesArray = [0,0,0,0];
+            this.position = [0,0];
         },        
         /**
          * 
