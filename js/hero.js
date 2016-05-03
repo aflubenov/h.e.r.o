@@ -134,20 +134,22 @@ var world = function () {},
      */
     addObject : function (pObject) {
         this.objectCollection.push(pObject);
+        return pObject;
     },
     /**
      * 
      */
     solids_addSolid: function (pObject) {
         this.solidCollection.push(pObject);
+        return pObject;
     },
     /**
      * 
      */
     solids_addHSolid:function (pHorizontalCoordinate) {
-            var oTmp = new phHSolidObject();
-            oTmp.solid_hCoordinate = pHorizontalCoordinate;
-            this.solids_addSolid(oTmp);
+        var oTmp = new phHSolidObject();
+        oTmp.solid_hCoordinate = pHorizontalCoordinate;
+        return this.solids_addSolid(oTmp);
     },
     /**
      * 
@@ -161,7 +163,7 @@ var world = function () {},
         oTmp.boundariesArray[3] = 0; //left
         oTmp.boundariesArray[1] = pWidth; //right
         oTmp.boundariesArray[2] = pHeight; //bottom
-        this.solids_addSolid(oTmp);
+        return this.solids_addSolid(oTmp);
     },
     /**
      * 
@@ -241,7 +243,7 @@ var init = function () {
         
         //solidos
         //mundo.solids_addHSolid(500);
-        mundo.solids_addSquareSolid(10,150,100,500);
+        var oTmp = mundo.solids_addSquareSolid(10,150,100,500);
         mundo.solids_addSquareSolid(100,510,200,100);
         mundo.solids_addSquareSolid(290,310,10,200);
         mundo.player = jugador;

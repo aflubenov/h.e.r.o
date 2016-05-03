@@ -102,12 +102,18 @@ var phHSolidObject = function () {
     },
     phHSolidObjectBase = {    
         type : "solid",
+        temporalDisableSolid: false,
         solid_hCoordinate: 0,
         solid_isColiding: function (paPosition, pSquareBoundaries, pGravityVertDirection) {
-                var bottomHit = (paPosition[1] + pSquareBoundaries.bottom - this.solid_hCoordinate)*pGravityVertDirection[1] >= tolerance;
-                var topHit = (paPosition[1] - pSquareBoundaries.top - this.solid_hCoordinate)*pGravityVertDirection[1] >= tolerance;
-                return (bottomHit || topHit);
+            var bottomHit,
+                topHit 
+            if(this.temporalDisableSolid) {
+                return false;
             }
+            bottomHit = (paPosition[1] + pSquareBoundaries.bottom - this.solid_hCoordinate)*pGravityVertDirection[1] >= tolerance;
+            topHit = (paPosition[1] - pSquareBoundaries.top - this.solid_hCoordinate)*pGravityVertDirection[1] >= tolerance;
+            return (bottomHit || topHit);
+        }
     };
 phHSolidObject.prototype = new Object(phHSolidObjectBase);
 
@@ -124,9 +130,17 @@ var pSolidObject = function () {
          */
         solid_isColiding: function (aPosition, pSquareBoundaries) {
            
-            var oObjectCorners = this.getCorners(aPosition, pSquareBoundaries),
-                oThisCorners = this.getCorners(),
+            var oObjectCorners,
+                oThisCorners,
                 i = 0;
+                
+            if(this.temporalDisableSolid) {
+                    return false;
+                }
+                
+            oObjectCorners = this.getCorners(aPosition, pSquareBoundaries);
+            oThisCorners = this.getCorners();
+                
             //---firsch check corners of the object came by param, if any corner is inside this solid, then is coliding.
             //by checking the corners, we consider the situation where the object is inside of this solid.
             for (i = 0; i < 4; i = i + 1) { 
