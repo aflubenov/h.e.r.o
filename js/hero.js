@@ -1,20 +1,11 @@
-CanvasRenderingContext2D.prototype.clear = 
-  CanvasRenderingContext2D.prototype.clear || function (preserveTransform) {
-    if (preserveTransform) {
-      this.save();
-      this.setTransform(1, 0, 0, 1, 0, 0);
-    }
-
-    this.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    if (preserveTransform) {
-      this.restore();
-    }           
-};
 var tolerance = 0.1;
 
 
-var world = function () {},
+var world = function () {
+    
+    this.player = new engine.player();
+    this.player.setKeyboardListener();
+},
     worldBase = {
         creationTime : (new Date()).getTime(),
         objectCollection : [],
@@ -83,7 +74,7 @@ var world = function () {},
             }            
         }
     },
-    /**
+    /** 
      * if there is a player setted in the world, it
      * iterates over every playable object and apply
      * movements
@@ -198,7 +189,7 @@ var world = function () {},
     }
 };
 
-world.prototype = new Object(worldBase);
+world.prototype = Object.create(worldBase);
 
 
 
@@ -207,46 +198,57 @@ var init = function () {
     var myCanvas = document.getElementById('myCanvas'),
         ctx = myCanvas.getContext("2d"),
         mundo = new world(),
-        cosa = new drawableObject(ctx),
-        bloque = new drawableObject(ctx),
-        piso = new drawableObject(ctx),
-        jugador = new player(),
+        mainCharacter = new hero.mainCharacter(ctx), // engine.drawableObject(ctx),
+        bloque = new engine.drawableObject(ctx),
+        piso = new engine.drawableObject(ctx),
+        img = new Image(),
+        img2 = new Image(),
         atmp;
         
-        jugador.setKeyboardListener();
-        
-        cosa.gravity_velocity.value = 0;
-        cosa.position=[30,30];
-        
-        //quitar
-        bloque.drawMethod = _.bind(function ()  {
-            this._canvasContext.beginPath();
-            ctx.rect(10,150,100,500);
-            ctx.stroke();
-        }, bloque);
-        //quitar
-        piso.drawMethod = _.bind(function ()  {
-            this._canvasContext.beginPath();
-            ctx.rect(100,510,200,100);
-            ctx.stroke();
-            
-            this._canvasContext.beginPath();
-            ctx.rect(290,310,10,200);
-            ctx.stroke();
-        }, piso);
+        img.src="imgs/soil_text_01.jpg";
+        img2.src = "imgs/rocks_text_01.jpg";
         
         
+        mainCharacter.gravity_velocity.value = 0;
+        mainCharacter.position=[30,0];
         
         mundo.gravity.isAccelerated = false;
         mundo.gravity.velocity = 9.4*0.2;
-        mundo.addObject(cosa);
+        mundo.addObject(mainCharacter);
+        
+        //quitar
+        img.onload = function () {
+            var pattern = ctx.createPattern(img, "repeat");
+            piso.drawMethod = _.bind(function ()  {
+                ctx.fillStyle = pattern;
+                this._canvasContext.beginPath();
+                ctx.fillRect(100,410,400,150);
+                ctx.stroke();
+                
+                this._canvasContext.beginPath();
+                ctx.fillRect(0,100,100,460);
+                ctx.stroke();
+            }, piso);
+        }
+        img2.onload = function () {
+            var pattern = ctx.createPattern(img2, "repeat");
+            bloque.drawMethod = _.bind(function ()  {
+                ctx.fillStyle = pattern;
+                
+                
+                //this._canvasContext.beginPath();
+                ctx.fillRect(470,150,30,360);
+                ctx.stroke();
+            }, bloque);        
+        }
+      
         
         //solidos
         //mundo.solids_addHSolid(500);
-        var oTmp = mundo.solids_addSquareSolid(10,150,100,500);
-        mundo.solids_addSquareSolid(100,510,200,100);
-        mundo.solids_addSquareSolid(290,310,10,200);
-        mundo.player = jugador;
+        var oTmp = mundo.solids_addSquareSolid(0,100,100,460);
+        mundo.solids_addSquareSolid(100,410,400,150);
+        mundo.solids_addSquareSolid(470,150,30,360);
+        
         
         mundo.startInterval(null, _.bind(function(timePassed){
             ctx.clear();
@@ -256,7 +258,7 @@ var init = function () {
             atmp[0].drawMethod();
             bloque.drawMethod();
             piso.drawMethod();
-            console.log(cosa.position);
+            console.log(mainCharacter.position);
               
         }, this))
 }
